@@ -12,14 +12,15 @@ The image installs
 * Android emulator image path specified by build arg EMULATOR_IMAGE_PATH
 * Appium server
 
-The defaults are
-* ARG ANDROID_API_VERSION=android-28
-* ARG BUILD_TOOLS_VERSION=28.0.3
-* ARG EMULATOR_IMAGE_PATH="system-images;${ANDROID_API_VERSION};google_apis;x86"
+The default build args are
+* ANDROID_API_VERSION=android-28
+* BUILD_TOOLS_VERSION=28.0.3
+* EMULATOR_IMAGE_PATH="system-images;${ANDROID_API_VERSION};google_apis;x86"
 
 ## To run the container
 ```
-sudo docker run --privileged -d -p 4723:4723 -p 5901:5901 -p 2222:22 thyrlian/android-sdk-vnc
+docker pull suryasreevedula/android-sdk-emulator
+sudo docker run --privileged -d -p 4723:4723 -p 5901:5901 -p 2222:22 suryasreevedula/android-sdk-emulator
 ```
 
 The container starts
