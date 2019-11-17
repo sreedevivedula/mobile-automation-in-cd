@@ -1,0 +1,162 @@
+Workshop
+
+Email Content
+=============
+
+VMWare Linux Image Setup for Android Emulator
+
+Create a virtual machine (using Easy Install)
+
+Increase Hard Disk to 40 GB and memory to 3 GB
+
+Add network adapter - Bridged Networking - WI-FI
+
+Go to Settings -> Processors and Memory -> Advanced Options -> Enable Hypervisor applications in the VM
+
+Start VM
+
+Check kvm-ok in terminal. You may have to install 
+
+    sudo apt-get update
+
+    sudo apt install -y cpu-checker
+
+	INFO: /dev/kvm exists
+
+	KVM acceleration can be used
+
+Install docker community edition - https://docs.docker.com/install/linux/docker-ce/ubuntu/
+
+    sudo apt-get update
+
+    sudo apt-get install \
+        apt-transport-https \
+        ca-certificates \
+        curl \
+        gnupg-agent \
+        software-properties-common
+
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+    sudo add-apt-repository \
+        "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+        $(lsb_release -cs) \
+        stable"
+
+    sudo apt-get update
+
+    sudo apt-get install docker-ce docker-ce-cli containerd.io        
+
+
+Create Docker Container for Android Emulator
+
+
+
+    sudo docker run --privileged -d -p 4723:4723 -p 5901:5901 -p 2222:22 thyrlian/android-sdk-vnc
+    sudo docker exec -it <container-id> /bin/bash
+
+Inside the Docker Container
+
+    # Install Appium
+
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update && apt-get install -y curl
+    curl -sL https://deb.nodesource.com/setup_12.x | bash -
+    apt-get install -y nodejs
+    npm install appium
+
+    # Install SDK Tools
+    sdkmanager "platform-tools" "platforms;android-28" "emulator" "build-tools;28.0.3"
+    yes | sdkmanager "system-images;android-28;google_apis;x86"
+    echo "no" | avdmanager create avd -n android-api-28-goolgle-apis-x86 -k "system-images;android-28;google_apis;x86" -d 19
+    echo "hw.ramSize=1024" >> /root/.android/avd/android-api-28-goolgle-apis-x86.avd/config.ini
+    emulator -avd android-api-28-goolgle-apis-x86 -no-audio -no-boot-anim -accel on -gpu swiftshader_indirect &
+
+Working Commands
+================
+
+sudo docker run --privileged -d -p 5037:5037 -p 5901:5901 -p 2222:22 thyrlian/android-sdk-vnc
+docker exec -it 62ed5ad6b952 /bin/bash
+sdkmanager "platform-tools" "platforms;android-28" "emulator" "build-tools;28.0.3"
+yes | sdkmanager "system-images;android-28;google_apis;x86"
+echo "no" | avdmanager create avd -n android-api-28-goolgle-apis-x86 -k "system-images;android-28;google_apis;x86" -d 19
+echo "hw.ramSize=1024" >> /root/.android/avd/android-api-28-goolgle-apis-x86.avd/config.ini
+emulator -avd android-api-28-goolgle-apis-x86 -no-audio -no-boot-anim -accel on -gpu swiftshader_indirect &
+
+To install appium in the same container
+apt-get update
+
+Did not work
+
+ - Problem with installing linuxbrew as root
+
+    yes | apt-get install build-essential curl git m4 ruby texinfo libbz2-dev libcurl4-openssl-dev libexpat-dev libncurses-dev zlib1g-dev
+        During this, there was a question to which I had to say "yes" regarding restarting services after package upgrades
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/linuxbrew/go/install)"
+
+Install nodejs and install appium node package
+
+    https://tecadmin.net/install-latest-nodejs-npm-on-ubuntu/
+    May want to install node 10 as it is officially supported by appium.
+    The appium server would be in /node_modules/.bin
+
+=================
+
+emulator -avd android-api-28-goolgle-apis-x86 -no-audio -no-boot-anim -accel on -gpu swiftshader_indirect &
+
+Investigate the output:
+
+    statvfs('/root/.android/avd/android-api-28-goolgle-apis-x86.avd/snapshots/default_boot/ram.img') failed: No such file or directory
+    Warning: QStandardPaths: XDG_RUNTIME_DIR not set, defaulting to '/tmp/runtime-root' ((null):0, (null))
+    emulator: INFO: QtLogger.cpp:66: Warning: QStandardPaths: XDG_RUNTIME_DIR not set, defaulting to '/tmp/runtime-root' ((null):0, (null))
+
+
+    Warning: QXcbIntegration: Cannot create platform OpenGL context, neither GLX nor EGL are enabled ((null):0, (null))
+    emulator: INFO: QtLogger.cpp:66: Warning: QXcbIntegration: Cannot create platform OpenGL context, neither GLX nor EGL are enabled ((null):0, (null))
+
+
+    emulator: ERROR: AdbHostServer.cpp:93: Unable to connect to adb daemon on port: 5037
+    emulator: ERROR: AdbHostServer.cpp:93: Unable to connect to adb daemon on port: 5037
+    NativeEventFilter: warning: cannot get mod mask info
+    Your emulator is out of date, please update by launching Android Studio:
+
+
+$ANDROID_HOME/emulator/emulator -avd android-api-28-goolgle-apis-x86 -no-audio -no-boot-anim -no-window -accel on -gpu off &
+
+
+Inside the docker container
+
+Working
+
+$ANDROID_HOME/tools/bin/sdkmanager "platform-tools" "system-images;android-25;google_apis;arm64-v8a" "platforms;android-25" "emulator"
+$ANDROID_HOME/tools/bin/avdmanager create avd -n testavd1 -k "system-images;android-25;google_apis;arm64-v8a" -d 19
+$ANDROID_HOME/emulator/emulator -avd testavd1 -no-audio -no-boot-anim -no-window -accel on -gpu off &
+
+Experimental
+
+sdkmanager "platform-tools" "platforms;android-28” "emulator"
+yes | sdkmanager "system-images;android-28;google_apis;x86"
+avdmanager create avd -n android-api-28-goolgle-apis-x86 -k "system-images;android-28;google_apis;x86" -d 19
+$ANDROID_HOME/emulator/emulator -avd android-api-28-goolgle-apis-x86 -no-audio -no-boot-anim -no-window -accel on -gpu off &
+
+Use 127.0.0.1 to connect to the VNC ( https://github.com/docker/for-mac/issues/2670 )
+
+adb -s emulator-5554 emu kill
+
+docker exec -it --rm thyrlian/android-sdk-vnc /bin/bash
+
+VVIP Links
+
+https://appiumpro.com/editions/28
+https://appiumpro.com/editions/54
+
+Selenium Grid Setup
+
+java -jar ~/Work/Learning/AllAppium/selenium-server-standalone-3.141.59.jar -role hub
+appium -p 4723 --default-capabilities='{"systemPort": 8100}' --nodeconfig android_node_config.json
+appium -p 4724 --default-capabilities='{"systemPort": 8201}' --nodeconfig android_node_config.json
+appium -p 4725 --default-capabilities='{"wdaLocalPort": 8300, "deviceName": "iPhone 6s"}' --nodeconfig ios_node_config.json
+appium -p 4726 --default-capabilities='{"wdaLocalPort": 8301, "deviceName": "iPhone 7"}' --nodeconfig ios_node_config.json
+
+https://medium.com/@AndreSand/android-emulator-on-docker-container-f20c49b129ef
+
