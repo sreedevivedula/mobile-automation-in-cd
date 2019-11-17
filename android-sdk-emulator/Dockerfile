@@ -9,7 +9,7 @@ RUN apt-get update && \
     apt-get install -y curl && \
     curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
     apt-get install -y nodejs && \
-    npm install appium
+    npm install -g appium --unsafe-perm=true --allow-root
 
 # Install Android Emulator
 ARG ANDROID_API_VERSION=android-28
