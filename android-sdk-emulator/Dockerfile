@@ -15,10 +15,11 @@ RUN apt-get update && \
 ARG ANDROID_API_VERSION=android-28
 ARG BUILD_TOOLS_VERSION=28.0.3
 ARG EMULATOR_IMAGE_PATH="system-images;${ANDROID_API_VERSION};google_apis;x86"
+ARG VIRTUAL_DEVICE_ID=19
 
 RUN sdkmanager "platform-tools" "platforms;${ANDROID_API_VERSION}" "emulator" "build-tools;${BUILD_TOOLS_VERSION}" && \
     yes | sdkmanager "${EMULATOR_IMAGE_PATH}" && \
-    echo "no" | avdmanager create avd -n test-avd -k ${EMULATOR_IMAGE_PATH} -d 19 && \
+    echo "no" | avdmanager create avd -n test-avd -k ${EMULATOR_IMAGE_PATH} -d ${VIRTUAL_DEVICE_ID} && \
     echo "hw.ramSize=1024" >> /root/.android/avd/test-avd.avd/config.ini
 
 ADD supervisord.conf /etc/supervisor/conf.d/
