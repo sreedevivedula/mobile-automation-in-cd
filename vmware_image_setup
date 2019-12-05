@@ -7,7 +7,7 @@ VMWare Linux Image Setup for Android Emulator
 
 Create a virtual machine (using Easy Install)
 
-Increase Hard Disk to 40 GB and memory to 3 GB
+Increase Hard Disk to 40 GB and memory to 3 GB and processor cores to 2
 
 Add network adapter - Bridged Networking - WI-FI
 
@@ -45,12 +45,19 @@ Install docker community edition - https://docs.docker.com/install/linux/docker-
 
     sudo apt-get update
 
-    sudo apt-get install docker-ce docker-ce-cli containerd.io        
+    sudo apt-get install docker-ce docker-ce-cli containerd.io
 
+    sudo chmod -R 777 /var/log
+
+    sudo chmod -R 777 /var/run/docker.sock
+
+    sudo apt install docker docker.io
+    
+    sudo apt install curl
+
+    Install Remote Desktop Viewer
 
 Create Docker Container for Android Emulator
-
-
 
     sudo docker run --privileged -d -p 4723:4723 -p 5901:5901 -p 2222:22 thyrlian/android-sdk-vnc
     sudo docker exec -it <container-id> /bin/bash
@@ -71,6 +78,23 @@ Inside the Docker Container
     echo "no" | avdmanager create avd -n android-api-28-goolgle-apis-x86 -k "system-images;android-28;google_apis;x86" -d 19
     echo "hw.ramSize=1024" >> /root/.android/avd/android-api-28-goolgle-apis-x86.avd/config.ini
     emulator -avd android-api-28-goolgle-apis-x86 -no-audio -no-boot-anim -accel on -gpu swiftshader_indirect &
+
+Building Docker Image
+=====================
+
+docker build -t android-sdk-emulator:latest .
+docker tag android-sdk-emulator:latest suryasreevedula/android-sdk-emulator:latest
+docker push suryasreevedula/android-sdk-emulator:latest
+export APPIUM_JAVA_ROOT=<TestFrameworkRoot>
+docker run --privileged -e SELENIUM_GRID_HOST=192.168.0.101 -e SELENIUM_GRID_PORT=4444 -d 
+    -p 5037:5037 -p 5901:5901 -p 2222:22 -v ${APPIUM_JAVA_ROOT}/apps:/apps 
+    -v ${APPIUM_JAVA_ROOT}/appium-node-configs:/appium-node-configs suryasreevedula/android-sdk-emulator:latest
+
+Exporting and Importing Docker images
+=====================================
+
+docker save android-sdk-emulator:latest > android-sdk-emulator-latest.tar
+docker 
 
 Working Commands
 ================
