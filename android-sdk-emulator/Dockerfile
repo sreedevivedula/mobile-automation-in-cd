@@ -11,12 +11,11 @@ RUN apt-get update && \
     apt-get install -y nodejs && \
     npm install -g appium --unsafe-perm=true --allow-root
 
-# Install Android Emulator
+# Install Android SDK Components and Emulator System Image
 ARG ANDROID_API_VERSION=android-28
 ARG BUILD_TOOLS_VERSION=28.0.1
 ARG EMULATOR_IMAGE_PATH="system-images;${ANDROID_API_VERSION};google_apis;x86"
 ARG VIRTUAL_DEVICE_ID=19
-
 RUN sdkmanager "platform-tools" "platforms;${ANDROID_API_VERSION}" "emulator" "build-tools;${BUILD_TOOLS_VERSION}" && \
     yes | sdkmanager "${EMULATOR_IMAGE_PATH}" && \
     echo "no" | avdmanager create avd -n test-avd -k ${EMULATOR_IMAGE_PATH} -d ${VIRTUAL_DEVICE_ID} && \

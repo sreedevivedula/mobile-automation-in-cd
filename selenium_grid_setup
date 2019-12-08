@@ -1,0 +1,11 @@
+1. Start Selenium Grid in Mac
+
+    docker run -d -p 4444:4444 --name selenium-grid selenium/hub:3.141.59-xenon
+
+2. Start Android Emulator in Linux VM
+
+    docker run --privileged -d -p 4723:4723 -p 5901:5901 -p 2222:22 \
+        -v /var/lib/go-agent/pipelines/appium-tests/appium-node-configs:/appium-node-configs \
+        -e SELENIUM_GRID_HOST=192.168.0.101 -e SELENIUM_GRID_PORT=4444 \
+        --name android-emulator suryasreevedula/android-emulator:latest
+

@@ -20,7 +20,8 @@ The default build args are
 ## To run the container
 ```
 docker pull suryasreevedula/android-sdk-emulator
-docker run --privileged -d -p 4723:4723 -p 5901:5901 -p 2222:22 -v <apps-dir>:/apps -v <appium-node-configs-dir>:/appium-node-configs suryasreevedula/android-sdk-emulator:latest
+
+docker run --privileged -d -p 4723:4723 -p 5901:5901 -p 2222:22 -e SELENIUM_GRID_HOST=<GRID_HOST> -e SELENIUM_GRID_PORT=<GRID_PORT> -v <apps-dir>:/apps -v <appium-node-configs-dir>:/appium-node-configs suryasreevedula/android-sdk-emulator:latest
 ```
 
 The container starts

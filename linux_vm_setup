@@ -1,0 +1,41 @@
+Configuring a Linux Virtual machine
+------------------------------------
+
+1. Enable Nested Virtualization as per the Hypervisor
+2. Set CPU cores to 3 or more and RAM to 4 GB or more
+3. Set Hard Disk to 40 GB or more
+
+In the Virtual Machine,
+
+    # Check if KVM is turned on
+    
+        sudo apt-get update
+
+        sudo apt install -y cpu-checker
+
+        kvm-ok command should return the below
+
+        INFO: /dev/kvm exists
+
+        KVM acceleration can be used
+
+    # Install Docker
+    
+        sudo apt-get install docker
+        
+        sudo apt install docker.io
+
+    # Pull Emulator Docker image
+    
+        docker pull suryasreevedula/android-emulator
+
+    # Install Go-agent
+
+        sudo apt install openjdk-11-jre-headless
+
+        # Copy and Unzip Go-agent zip file from Host machine
+        # If Home folder is shared with guest VM, then it is mounted on media/psf/Home/
+
+        cd <go-agent-dir>
+
+        ./bin/go-agent console
